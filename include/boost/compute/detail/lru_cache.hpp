@@ -39,6 +39,28 @@ public:
     {
     }
 
+    // in case of default copying list iterators would be invalidated
+    lru_cache(const lru_cache& other)
+        : m_list(other.m_list),
+          m_capacity(other.m_capacity)
+    {
+        for(typename list_type::iterator i = m_list.begin(); i != m_list.end(); ++i){
+            m_map[*i] = std::make_pair(other.m_map.at(*i).first, i);
+        }
+    }
+
+    lru_cache& operator=(const lru_cache& other)
+    {
+        if(this != &other){
+            m_list = other.m_list;
+            m_capacity = other.m_capacity;
+            for(typename list_type::iterator i = m_list.begin(); i != m_list.end(); ++i){
+                m_map[*i] = std::make_pair(other.m_map.at(*i).first, i);
+            }
+        }
+        return *this;
+    }
+
     ~lru_cache()
     {
     }
